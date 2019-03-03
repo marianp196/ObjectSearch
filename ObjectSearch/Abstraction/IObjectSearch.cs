@@ -6,7 +6,7 @@ namespace ObjectSearcher.Abstraction
 {
 	public interface IObjectSearch
 	{
-		IEnumerable<SearchResult<TObj>> Search<TObj>(IEnumerable<TObj> data, 
+		IEnumerable<TObj> Search<TObj>(IEnumerable<TObj> data, 
 													 string[] searchStrings, SearchConfig config);		
 	}
 

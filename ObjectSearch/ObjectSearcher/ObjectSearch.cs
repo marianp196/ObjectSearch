@@ -7,23 +7,34 @@ namespace ObjectSearcher.ObjectSearcher
 {
 	public class ObjectSearch : IObjectSearch
 	{
-		public IEnumerable<SearchResult<TObj>> Search<TObj>(IEnumerable<TObj> data, string[] searchStrings, SearchConfig config = null)
+		public IEnumerable<TObj> Search<TObj>(IEnumerable<TObj> data, string[] searchStrings, SearchConfig config = null)
 		{
 			var conf = getConfig(config);
 			var fieldPaths = _fieldFilter.GetFields(typeof(TObj), conf.SearchTypes, conf.IgnoreFields);
 
+			var result = new List<TObj>();
 
 			foreach(var objDta in data)
 			{
-				var searchableValues = new List<string>();
-				foreach (var fieldPath in fieldPaths)
+				var searchableValues = GetSearchableValues(fieldPaths, objDta);
+
+				foreach (string searchString in searchStrings)
 				{
-					 searchableValues.AddRange(GetValuesFromObject<TObj>(objDta, fieldPath));
+
 				}
-				Console.WriteLine(searchableValues);
 			}
 
-			return null;
+			return result;
+		}
+
+		private IEnumerable<string> GetSearchableValues<TObj>(IEnumerable<FieldPath> fieldPaths, TObj objDta)
+		{
+			var searchableValues = new List<string>();
+			foreach (var fieldPath in fieldPaths)
+			{
+				searchableValues.AddRange(GetValuesFromObject<TObj>(objDta, fieldPath));
+			}
+			return searchableValues;
 		}
 
 		private IEnumerable<string> GetValuesFromObject<TObj>(TObj obj, FieldPath fieldPath)
