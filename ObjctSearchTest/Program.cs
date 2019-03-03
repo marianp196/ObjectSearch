@@ -21,12 +21,12 @@ namespace ObjctSearchTest
 
 	public class Test
 	{
-		public string ID { get; set; }
-		public string Text { get; set; }
-		public TestChild Child { get; set; }
+		public string ID { get; set; } = "";
+		public string Text { get; set; } = "hallo";
+		public TestChild Child { get; set; } =new TestChild();
 	}
 	public class TestChild
 	{
-		public string Str { get; set; }
+		public string Str { get; set; } = "ottp";
 	}
 }

@@ -12,36 +12,40 @@ namespace ObjectSearcher.ObjectSearcher
 			var conf = getConfig(config);
 			var fieldPaths = _fieldFilter.GetFields(typeof(TObj), conf.SearchTypes, conf.IgnoreFields);
 
+
 			foreach(var objDta in data)
 			{
-				var searchableValues = GetValuesFromObject<TObj>(objDta, fieldPaths);
+				var searchableValues = new List<string>();
+				foreach (var fieldPath in fieldPaths)
+				{
+					 searchableValues.AddRange(GetValuesFromObject<TObj>(objDta, fieldPath));
+				}
+				Console.WriteLine(searchableValues);
 			}
 
 			return null;
 		}
 
-		private IEnumerable<string> GetValuesFromObject<TObj>(TObj obj, IEnumerable<FieldPath> fieldPaths)
+		private IEnumerable<string> GetValuesFromObject<TObj>(TObj obj, FieldPath fieldPath)
 		{
 			var result = new List<string>();
-			foreach(var fieldPath in fieldPaths)
-			{
-				if(fieldPath.Next.Count == 0)
-				{
-					var value = fieldPath.Property.GetValue(obj).ToString();
-					result.Add(value);
-					return result;
-				}
-				else
-				{
-					foreach(var childPaths in fieldPath.Next)
-					{
-						var propValue = fieldPath.Property.GetValue(obj);
-						var valueList = GetValuesFromObject(propValue, childPaths.Next);
-						result.AddRange(valueList);
-					}
-				}
-			}
 
+			if (fieldPath.Next.Count == 0)
+			{
+				var value = fieldPath.Property.GetValue(obj).ToString();
+				result.Add(value);
+				return result;
+			}
+			else
+			{
+				var propValue = fieldPath.Property.GetValue(obj);
+				foreach (var fieldChild in fieldPath.Next)
+				{
+					var valueList = GetValuesFromObject(propValue, fieldChild);
+					result.AddRange(valueList);
+				}				
+			}
+		
 			return result;
 		}
 				
