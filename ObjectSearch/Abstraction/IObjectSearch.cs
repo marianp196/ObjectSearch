@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ObjectSearch.Abstraction
+namespace ObjectSearcher.Abstraction
 {
 	public interface IObjectSearch
 	{

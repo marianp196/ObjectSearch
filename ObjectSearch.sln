@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectSearch", "ObjectSearch\ObjectSearch.csproj", "{0B7F0FF1-4BB3-4A05-B7D1-C95C9860851C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjctSearchTest", "ObjctSearchTest\ObjctSearchTest.csproj", "{21FD0B01-44DE-4EE8-A46A-1E606F58D297}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0B7F0FF1-4BB3-4A05-B7D1-C95C9860851C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B7F0FF1-4BB3-4A05-B7D1-C95C9860851C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B7F0FF1-4BB3-4A05-B7D1-C95C9860851C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21FD0B01-44DE-4EE8-A46A-1E606F58D297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21FD0B01-44DE-4EE8-A46A-1E606F58D297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21FD0B01-44DE-4EE8-A46A-1E606F58D297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21FD0B01-44DE-4EE8-A46A-1E606F58D297}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
