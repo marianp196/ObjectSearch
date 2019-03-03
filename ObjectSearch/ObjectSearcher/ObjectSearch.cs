@@ -1,6 +1,7 @@
 ﻿using ObjectSearcher.Abstraction;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ObjectSearcher.ObjectSearcher
@@ -16,48 +17,48 @@ namespace ObjectSearcher.ObjectSearcher
 
 			foreach(var objDta in data)
 			{
-				var searchableValues = GetSearchableValues(fieldPaths, objDta);
+				var searchableValues = _valueSelector.GetSearchableValues(fieldPaths, objDta);
 
-				foreach (string searchString in searchStrings)
-				{
-
-				}
+				if (search(searchableValues, searchStrings, conf.SearchMode))
+					result.Add(objDta);
 			}
 
 			return result;
 		}
 
-		private IEnumerable<string> GetSearchableValues<TObj>(IEnumerable<FieldPath> fieldPaths, TObj objDta)
+		private bool search(IEnumerable<string> values, string[] searchStrings, ESearchMode mode)
 		{
-			var searchableValues = new List<string>();
-			foreach (var fieldPath in fieldPaths)
+			if (mode == ESearchMode.And)
 			{
-				searchableValues.AddRange(GetValuesFromObject<TObj>(objDta, fieldPath));
+				return andCombine(values, searchStrings);
 			}
-			return searchableValues;
+			else if (mode == ESearchMode.Or)
+			{
+				return orCombine(values, searchStrings);
+			}
+
+			return false;
 		}
 
-		private IEnumerable<string> GetValuesFromObject<TObj>(TObj obj, FieldPath fieldPath)
+		private bool orCombine(IEnumerable<string> values, string[] search)
 		{
-			var result = new List<string>();
+			foreach (var searchString in search)
+			{
+				if (values.Count(x => x.Contains(searchString)) > 0)
+					return true;
+			}
+			return false;
+		}
 
-			if (fieldPath.Next.Count == 0)
+		private bool andCombine(IEnumerable<string> values, string[] search)
+		{
+			foreach(var searchString in search)
 			{
-				var value = fieldPath.Property.GetValue(obj).ToString();
-				result.Add(value);
-				return result;
+				if (values.Count(x => x.Contains(searchString)) == 0)
+					return false;
 			}
-			else
-			{
-				var propValue = fieldPath.Property.GetValue(obj);
-				foreach (var fieldChild in fieldPath.Next)
-				{
-					var valueList = GetValuesFromObject(propValue, fieldChild);
-					result.AddRange(valueList);
-				}				
-			}
-		
-			return result;
+
+			return true;
 		}
 				
 		private SearchConfig getConfig(SearchConfig input)
@@ -75,6 +76,7 @@ namespace ObjectSearcher.ObjectSearcher
 			return input;
 		}
 
+		private ValueSelector _valueSelector = new ValueSelector();
 		private FieldFilter _fieldFilter = new FieldFilter();
 		private SearchConfig _standardConfig = new SearchConfig {
 			SearchMode = ESearchMode.And,
