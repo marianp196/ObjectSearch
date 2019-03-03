@@ -23,9 +23,21 @@ namespace ObjectSearcher.ObjectSearcher
 
 			if (fieldPath.Next.Count == 0)
 			{
-				var value = fieldPath.Property.GetValue(obj)?.ToString();
-				if(value != null && value != "")
-					result.Add(value);
+				var value = fieldPath.Property.GetValue(obj);
+
+				if (fieldPath.IsEnumeruable)
+				{
+					foreach(var item in (IEnumerable<object>)value)
+					{
+						if (item != null && item.ToString() != "")
+							result.Add(item.ToString());
+					}
+				}
+				else
+				{
+					if (value != null && value.ToString() != "")
+						result.Add(value.ToString());
+				}
 				return result;
 			}
 			else
@@ -34,11 +46,26 @@ namespace ObjectSearcher.ObjectSearcher
 				if (propValue == null)
 					return result;
 
-				foreach (var fieldChild in fieldPath.Next)
+				if (fieldPath.IsEnumeruable)
 				{
-					var valueList = GetValuesFromObject(propValue, fieldChild);
-					result.AddRange(valueList);
+					foreach(var item in (IEnumerable<object>)propValue)
+					{
+						foreach (var fieldChild in fieldPath.Next)
+						{
+							var valueList = GetValuesFromObject(item, fieldChild);
+							result.AddRange(valueList);
+						}
+					}
 				}
+				else
+				{
+					foreach (var fieldChild in fieldPath.Next)
+					{
+						var valueList = GetValuesFromObject(propValue, fieldChild);
+						result.AddRange(valueList);
+					}
+				}
+				
 			}
 
 			return result;

@@ -24,13 +24,21 @@ namespace ObjectSearcher.ObjectSearcher
 
 		private FieldPath getField(PropertyInfo property, Type[] searchTypes, string[] ignoreFields)
 		{
-			if (shouldIgnore(property, searchTypes, ignoreFields))
+			var type = property.PropertyType;
+			var isEnumerable = false;
+
+			if (property.PropertyType.BaseType == typeof(IEnumerable<>).BaseType)
+			{
+				isEnumerable = true;
+				type = property.PropertyType.GetGenericArguments()[0];
+			}
+				
+			if (shouldIgnore(type, property.Name ,searchTypes, ignoreFields))
 				return null;
 
-			var propType = property.PropertyType;
-			var result = new FieldPath() { Property = property };
+			var result = new FieldPath() { Property = property, IsEnumeruable = isEnumerable};
 
-			foreach(PropertyInfo prop in propType.GetProperties())
+			foreach(PropertyInfo prop in type.GetProperties())
 			{			
 				var child = getField(prop, searchTypes, ignoreFields);
 
@@ -44,10 +52,10 @@ namespace ObjectSearcher.ObjectSearcher
 			
 		}
 
-		private bool shouldIgnore(PropertyInfo propertyInfo, Type[] searchTypes, string[] ignoreFields)
+		private bool shouldIgnore(Type type, string propertyName, Type[] searchTypes, string[] ignoreFields)
 		{
-			bool ignoreByName = ignoreFields.Where(f => propertyInfo.Name == f).Count() > 1;
-			bool ignoreByType = searchTypes.Where(t => propertyInfo.PropertyType == t).Count() == 0;
+			bool ignoreByName = ignoreFields.Where(f => propertyName == f).Count() > 0;
+			bool ignoreByType = searchTypes.Where(t => type == t).Count() == 0;
 
 			return ignoreByName || ignoreByType;
 		}
@@ -56,6 +64,7 @@ namespace ObjectSearcher.ObjectSearcher
 	public class FieldPath
 	{
 		public PropertyInfo Property { get; set; }
+		public bool IsEnumeruable { get; set; }
 		public IList<FieldPath> Next { get; set; } = new List<FieldPath>();
 	}
 }
